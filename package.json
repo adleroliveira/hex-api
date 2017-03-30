@@ -1,0 +1,13 @@
+{
+  "name": "hex-api",
+  "version": "1.0.0",
+  "description": "Hex API",
+  "main": "index.js",
+  "repository": "https://github.com/adleroliveira/hex-api.git",
+  "author": "Adler Oliveira",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2"
+  }
+}
