@@ -2,12 +2,19 @@
   "name": "hex-api",
   "version": "1.0.0",
   "description": "Hex API",
-  "main": "index.js",
+  "main": "./src/app.js",
   "repository": "https://github.com/adleroliveira/hex-api.git",
   "author": "Adler Oliveira",
   "license": "MIT",
+  "scripts": {
+    "start": "node ./src/app"
+  },
   "dependencies": {
     "body-parser": "^1.17.1",
-    "express": "^4.15.2"
+    "connect-redis": "^3.2.0",
+    "cors": "^2.8.2",
+    "express": "^4.15.2",
+    "jsonwebtoken": "^7.3.0",
+    "mongoose": "^4.9.2"
   }
 }
