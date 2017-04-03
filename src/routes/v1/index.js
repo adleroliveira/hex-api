@@ -13,6 +13,7 @@ router.get('/setup', (req, res) => {
   // create a sample user
   const admin = new User({
     name: 'Pica das galaxias',
+    username: 'picag',
     password: '123',
     admin: true
   })
@@ -26,28 +27,44 @@ router.get('/setup', (req, res) => {
 })
 
 router.post('/login', (req, res) => {
-  User.findOne({ name: req.body.name }).lean().exec((err, user) => {
-    if (err) return res.status(500).json({ error: 'ERROR Getting the User' })
-    if (!user) {
-      return (res.status(401).json({
-        success: false,
-        message: 'Authentication failed. User not found.'
-      }))
+  User.getAuthenticated(req.body.username, req.body.password, function(err, user, reason) {
+    if (err) return res.status(500).json({ error: 'Something\'s went wrong... ${err}' })
+
+    // Signing in if we have a user
+    if (user) {
+      const token = jwt.sign(user, config.secret, {
+        expiresIn: 60 * 60 * 24 // expires in 24 hours
+      })
+      res.json({
+        success: true,
+        message: 'Enjoy your token!',
+        token: token
+      })
     }
-    if (user.password !== req.body.password) {
-      return (res.status(401).json({
-        success: false,
-        message: 'Authentication failed.'
-      }))
+
+    // otherwise we can determine why we failed.
+    // All login fail message are equal, as explained here: https://www.owasp.org/index.php/Authentication_Cheat_Sheet#Authentication_and_Error_Messages
+    var reasons = User.failedLogin
+    switch (reason) {
+      case reasons.NOT_FOUND:
+        return (res.status(401).json({
+          success: false,
+          message: 'Authentication failed.'
+        }))
+      case reasons.PASSWORD_INCORRECT:
+        return (res.status(401).json({
+          success: false,
+          message: 'Authentication failed.'
+        }))
+        break
+      case reasons.MAX_ATTEMPTS:
+        // send email or otherwise notify user that account is temporarily locked
+        return (res.status(401).json({
+          success: false,
+          message: 'Authentication failed. Your account is temporarily locked'
+        }))
+        break
     }
-    const token = jwt.sign(user, config.secret, {
-      expiresIn: 60 * 60 * 24 // expires in 24 hours
-    })
-    res.json({
-      success: true,
-      message: 'Enjoy your token!',
-      token: token
-    })
   })
 })
 

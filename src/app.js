@@ -12,7 +12,10 @@ const User = require('./models/user')
 // Config
 const port = process.env.PORT || 8001
 const app = express()
-mongoose.connect(config.database)
+mongoose.connect(config.database, err => {
+  if (err) throw err;
+  console.log('Successfully connected to MongoDB');
+})
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }))
