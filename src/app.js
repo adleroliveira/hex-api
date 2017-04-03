@@ -7,7 +7,7 @@ const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 
 const config = require('./config')
-const User   = require('./models/user')
+const User = require('./models/user')
 
 // Config
 const port = process.env.PORT || 8001
