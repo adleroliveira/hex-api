@@ -28,7 +28,7 @@ router.get('/setup', (req, res) => {
 
 router.post('/login', (req, res) => {
   User.getAuthenticated(req.body.username, req.body.password, function(err, user, reason) {
-    if (err) return res.status(500).json({ error: 'Something\'s went wrong... ${err}' })
+    if (err) return res.status(500).json({ error: `Something\'s went wrong... ${err}` })
 
     // Signing in if we have a user
     if (user) {

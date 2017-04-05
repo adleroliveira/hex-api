@@ -37,14 +37,14 @@ UserSchema.pre('save', function(next) {
   })
 })
 
-UserSchema.method('comparePassword', (candidatePassword, callback) => {
+UserSchema.method('comparePassword', function(candidatePassword, callback) {
   bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
     if (err) return callback(err)
     callback(null, isMatch)
   })
 })
 
-UserSchema.method('incrementLoginAttempts', callback => {
+UserSchema.method('incrementLoginAttempts', function(callback) {
   // if we have a previous lock that has expired, restart at 1
   if (this.lockUntil && this.lockUntil < Date.now()) {
     return this.update({
@@ -70,8 +70,8 @@ const reasons = UserSchema.statics.failedLogin = {
   MAX_ATTEMPTS: 2
 }
 
-UserSchema.static('getAuthenticated', (username, password, callback) => {
-  this.findOne({ username: username }).lean().exec((err, user) => {
+UserSchema.static('getAuthenticated', function(username, password, callback) {
+  this.findOne({ username: username }).exec((err, user) => {
     if (err) return callback(err)
 
     // make sure the user exists
