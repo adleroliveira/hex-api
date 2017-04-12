@@ -9,23 +9,6 @@ router.get('/', (req, res) => {
   res.status(200).json({ message: 'get' })
 })
 
-router.get('/setup', (req, res) => {
-  // create a sample user
-  const admin = new User({
-    name: 'Pica das galaxias',
-    username: 'picag',
-    password: '123',
-    admin: true
-  })
-
-  // save the sample user
-  admin.save((err) => {
-    if (err) return res.status(500).json({ error: 'ERROR Creating User' })
-    console.log('User saved successfully')
-    res.json({ success: true })
-  })
-})
-
 router.post('/login', (req, res) => {
   User.getAuthenticated(req.body.username, req.body.password, function(err, user, reason) {
     if (err) return res.status(500).json({ error: `Something\'s went wrong... ${err}` })
@@ -68,7 +51,7 @@ router.post('/login', (req, res) => {
   })
 })
 
-// ## Middleware that check if it's logged in will be aplied on routes from here
+// # Middleware that check if it's logged in will be aplied on routes from here
 router.use((req, res, next) => {
   const token = req.body.token || req.query.token || req.headers['x-access-token']
   if (token) {
