@@ -1,7 +1,7 @@
 const router = require("express").Router()
 const User = require('../../models/user')
 const jwt = require('jsonwebtoken')
-const config = require('../../config')
+const config = require('config')
 
 // # Routes without middleware
 router.get('/', (req, res) => {
@@ -55,7 +55,7 @@ router.post('/login', (req, res) => {
 router.use((req, res, next) => {
   const token = req.body.token || req.query.token || req.headers['x-access-token']
   if (token) {
-    jwt.verify(token, config.secret, (err, decoded) => {
+    jwt.verify(token, config.get('secret'), (err, decoded) => {
       if (err) return res.status(401).json({ success: false, message: 'Failed to authenticate token.' })
       req.decoded = decoded
       next()
