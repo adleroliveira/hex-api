@@ -31,7 +31,7 @@ UserSchema.pre('save', function(next) {
 
   if (!user.created_at) user.created_at = new Date()
 
-  if (!user.isModified('password')) return next();
+  if (!user.isModified('password')) return next()
 
   bcrypt.genSalt(SALT_WORK_FACTOR, (err, salt) => {
     if (err) return next(err)
