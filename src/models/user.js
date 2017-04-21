@@ -11,9 +11,13 @@ const UserSchema = new Schema({
   name: { type: String, required: true },
   username: { type: String, required: true, index: { unique: true } },
   password: { type: String, required: true },
+  email: { type: String, required: true },
+  phone: { type: String, match: [/^\([1-9]{2}\) (?:[2-8]|9[1-9])[0-9]{3}\-[0-9]{4}$/, 'Phone number invalid. Try something like (11) 99999-9999'] },
   loginAttempts: { type: Number, required: true, default: 0 },
   lockUntil: { type: Number },
-  admin: Boolean
+  admin: { type: Boolean, default: false },
+  created_at: Date,
+  updated_at: { type: Date, default: Date.now }
 })
 
 UserSchema.virtual('isLocked').get(function() {
@@ -25,7 +29,9 @@ UserSchema.virtual('isLocked').get(function() {
 UserSchema.pre('save', function(next) {
   let user = this
 
-  if (!user.isModified('password')) return next()
+  if (!user.created_at) user.created_at = new Date()
+
+  if (!user.isModified('password')) return next();
 
   bcrypt.genSalt(SALT_WORK_FACTOR, (err, salt) => {
     if (err) return next(err)
