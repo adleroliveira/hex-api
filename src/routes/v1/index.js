@@ -13,10 +13,24 @@ router.get('/', (req, res) => {
 })
 
 router.get('/get-url', (req, res) => {  
+  
   request(req.query.url, function (error, response, html) {
+  
       var data = extractor(html)
-      data.text = removeDiacritics(data.text)
-      res.status(200).json({ data })
+      //data.text = removeDiacritics(data.text)
+      res.status(200).json({ 
+        url:data.canonicalLink || req.query.url,
+        domain: '',
+        title:data.title || '',
+        keywords: data.tags || [],
+        topics:'(bayes)',
+        subject:'',
+        summary:'',
+        sentiment: '(neutral, positive, negative)',
+        credibility_scoring: '(0~1)',
+        alignment: '(ideologia, movimento) ?',
+        leaning: '(right, left) ?'
+      })
   });
 })
 
