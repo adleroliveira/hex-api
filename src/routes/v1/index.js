@@ -2,11 +2,22 @@ const router = require("express").Router()
 const User = require('../../models/user')
 const jwt = require('jsonwebtoken')
 const config = require('config')
+const request = require('request')
+const extractor = require('unfluff')
+const removeDiacritics = require('diacritics').remove
 
 // # Routes without middleware
 router.get('/', (req, res) => {
   console.log(req.user)
   res.status(200).json({ message: 'get' })
+})
+
+router.get('/get-url', (req, res) => {  
+  request(req.query.url, function (error, response, html) {
+      var data = extractor(html)
+      data.text = removeDiacritics(data.text)
+      res.status(200).json({ data })
+  });
 })
 
 router.post('/login', (req, res) => {
