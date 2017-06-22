@@ -12,26 +12,31 @@ router.get('/', (req, res) => {
   res.status(200).json({ message: 'get' })
 })
 
-router.get('/get-url', (req, res) => {  
-  
-  request(req.query.url, function (error, response, html) {
-  
+router.get('/get-url', (req, res) => {
+  if (typeof req.query.url != 'undefined') {
+    request(req.query.url, function (error, response, html) {
       var data = extractor(html)
-      //data.text = removeDiacritics(data.text)
-      res.status(200).json({ 
-        url:data.canonicalLink || req.query.url,
+      data.text = removeDiacritics(data.text)
+      res.status(200).json({
+        url: data.canonicalLink || req.query.url,
         domain: '',
-        title:data.title || '',
+        title: data.title || '',
         keywords: data.tags || [],
-        topics:'(bayes)',
-        subject:'',
-        summary:'',
+        topics: '(bayes)',
+        subject: '',
+        summary: data.description ||'',
         sentiment: '(neutral, positive, negative)',
         credibility_scoring: '(0~1)',
         alignment: '(ideologia, movimento) ?',
         leaning: '(right, left) ?'
       })
-  });
+    });
+  } else {
+    res.status(403).json({
+      success: false,
+      message: 'Missing url parameter.'
+    })
+  }
 })
 
 router.post('/login', (req, res) => {
