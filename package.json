@@ -22,6 +22,7 @@
     "morgan": "^1.8.1",
     "request": "^2.81.0",
     "rotating-file-stream": "^1.2.1",
+    "sentiment-ptbr": "^1.0.2",
     "unfluff": "^1.1.0"
   }
 }
