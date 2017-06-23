@@ -41,7 +41,7 @@ router.get('/get-url', (req, res) => {
 
 router.post('/login', (req, res) => {
   User.getAuthenticated(req.body.username, req.body.password, function(err, user, reason) {
-    if (err) return res.status(500).json({ error: `Something\'s went wrong... ${err}` })
+    if (err) return res.status(500).json({ error: `Something went wrong... ${err}` })
 
     // Signing in if we have a user
     if (user) {
@@ -78,6 +78,22 @@ router.post('/login', (req, res) => {
         }))
         break
     }
+  })
+})
+
+router.post('/create', (req, res) => {
+  const newUser = new User({
+    name: req.body.name,
+    username: req.body.username,
+    password: req.body.password,
+    email: req.body.email,
+    phone: req.body.phone
+  })
+
+  newUser.save((err) => {
+    if (err) return res.status(500).json({ message: 'Error creating user', error: err })
+    console.log('User saved successfully')
+    res.json({ message: 'User saved successfully', success: true })
   })
 })
 

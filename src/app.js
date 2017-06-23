@@ -24,7 +24,7 @@ const accessLogStream = rfs('access.log', {
 // Config
 const port = process.env.PORT || 8001
 const app = express()
-const database = 'mongodb://' + config.get('db.user') + ':' + config.get('db.pass') + '@' + config.get('db.server')
+const database = `mongodb://${config.get('db.user')}:${config.get('db.pass')}@${config.get('db.server')}`
 
 mongoose.connect(database, err => {
   if (err) throw err;
