@@ -6,6 +6,8 @@ const request = require('request')
 const extractor = require('unfluff')
 const removeDiacritics = require('diacritics').remove
 
+const sentiment = require('sentiment-ptbr');
+
 // # Routes without middleware
 router.get('/', (req, res) => {
   console.log(req.user)
@@ -14,9 +16,16 @@ router.get('/', (req, res) => {
 
 router.get('/get-url', (req, res) => {
   if (typeof req.query.url != 'undefined') {
-    request(req.query.url, function (error, response, html) {
-      var data = extractor(html)
+    request(req.query.url, function(error, response, html) {
+      const data = extractor(html)
+
+      // clean body text
       data.text = removeDiacritics(data.text)
+
+      // Sentiment analysis
+      let sa = sentiment(data.text).score
+      if (sa <= 5 && sa >= -5) { sa += '|neutral' } else if (sa > 5) { sa += '|positive' } else { sa += '|negative' }
+
       res.status(200).json({
         url: data.canonicalLink || req.query.url,
         domain: '',
@@ -24,11 +33,11 @@ router.get('/get-url', (req, res) => {
         keywords: data.tags || [],
         topics: '(bayes)',
         subject: '',
-        summary: data.description ||'',
-        sentiment: '(neutral, positive, negative)',
+        summary: data.description || '',
+        sentiment: sa,
         credibility_scoring: '(0~1)',
-        alignment: '(ideologia, movimento) ?',
-        leaning: '(right, left) ?'
+        alignment: '(ideologia, movimento)',
+        leaning: '(right, left)'
       })
     });
   } else {
