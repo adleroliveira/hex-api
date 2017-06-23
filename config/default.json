@@ -1,8 +1,0 @@
-{
-  "db": {
-    "user": "root",
-    "pass": "h4DiTX9b3",
-    "server": "mongodb.andre-amorim.com:27017/admin"
-  },
-  "secret": "hex"
-}
