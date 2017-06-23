@@ -5,8 +5,8 @@ const config = require('config')
 const request = require('request')
 const extractor = require('unfluff')
 const removeDiacritics = require('diacritics').remove
-
-const sentiment = require('sentiment-ptbr');
+const sentiment = require('sentiment-ptbr')
+const summaryTool = require('node-summary')
 
 // # Routes without middleware
 router.get('/', (req, res) => {
@@ -26,6 +26,12 @@ router.get('/get-url', (req, res) => {
       let sa = sentiment(data.text).score
       if (sa <= 5 && sa >= -5) { sa += '|neutral' } else if (sa > 5) { sa += '|positive' } else { sa += '|negative' }
 
+      let sumry;
+      summaryTool.summarize(data.title, data.text, (err, summary) => {
+        if (err) sumry = ""
+        sumry = summary
+      });
+
       res.status(200).json({
         url: data.canonicalLink || req.query.url,
         domain: '',
@@ -33,7 +39,7 @@ router.get('/get-url', (req, res) => {
         keywords: data.tags || [],
         topics: '(bayes)',
         subject: '',
-        summary: data.description || '',
+        summary: sumry || '',
         sentiment: sa,
         credibility_scoring: '(0~1)',
         alignment: '(ideologia, movimento)',

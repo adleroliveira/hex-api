@@ -20,6 +20,7 @@
     "jsonwebtoken": "^7.3.0",
     "mongoose": "^4.9.2",
     "morgan": "^1.8.1",
+    "node-summary": "^1.1.0",
     "request": "^2.81.0",
     "rotating-file-stream": "^1.2.1",
     "sentiment-ptbr": "^1.0.2",
