@@ -2,11 +2,7 @@ const router = require("express").Router()
 const User = require('../../models/user')
 const jwt = require('jsonwebtoken')
 const config = require('config')
-const request = require('request')
-const extractor = require('unfluff')
-const removeDiacritics = require('diacritics').remove
-const sentiment = require('sentiment-ptbr')
-const summaryTool = require('node-summary')
+const getUrl = require('./getUrl')
 
 // # Routes without middleware
 router.get('/', (req, res) => {
@@ -14,45 +10,7 @@ router.get('/', (req, res) => {
   res.status(200).json({ message: 'get' })
 })
 
-router.get('/get-url', (req, res) => {
-  if (typeof req.query.url != 'undefined') {
-    request(req.query.url, function(error, response, html) {
-      const data = extractor(html)
-
-      // clean body text
-      data.text = removeDiacritics(data.text)
-
-      // Sentiment analysis
-      let sa = sentiment(data.text).score
-      if (sa <= 5 && sa >= -5) { sa += '|neutral' } else if (sa > 5) { sa += '|positive' } else { sa += '|negative' }
-
-      let sumry;
-      summaryTool.summarize(data.title, data.text, (err, summary) => {
-        if (err) sumry = ""
-        sumry = summary
-      });
-
-      res.status(200).json({
-        url: data.canonicalLink || req.query.url,
-        domain: '',
-        title: data.title || '',
-        keywords: data.tags || [],
-        topics: '(bayes)',
-        subject: '',
-        summary: sumry || '',
-        sentiment: sa,
-        credibility_scoring: '(0~1)',
-        alignment: '(ideologia, movimento)',
-        leaning: '(right, left)'
-      })
-    });
-  } else {
-    res.status(403).json({
-      success: false,
-      message: 'Missing url parameter.'
-    })
-  }
-})
+router.get('/get-url', getUrl)
 
 router.post('/login', (req, res) => {
   User.getAuthenticated(req.body.username, req.body.password, function(err, user, reason) {
