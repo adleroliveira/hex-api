@@ -16,7 +16,7 @@ const getUrl = (req, res) => {
     // clean body text
     const text = removeDiacritics(data.text)
 
-    if ('undefined' !== typeof req.query.category) alignment.learn(text, req.query.category)
+    if ('undefined' !== typeof req.query.alignment) alignment.learn(text, req.query.alignment)
 
     let sumry;
     summaryTool.summarize(data.title, text, (err, summary) => {

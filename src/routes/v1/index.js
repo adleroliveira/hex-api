@@ -3,6 +3,7 @@ const User = require('../../models/user')
 const jwt = require('jsonwebtoken')
 const config = require('config')
 const getUrl = require('./getUrl')
+RandomForestClassifier = require('random-forest-classifier').RandomForestClassifier
 
 // # Routes without middleware
 router.get('/', (req, res) => {
@@ -11,6 +12,84 @@ router.get('/', (req, res) => {
 })
 
 router.get('/get-url', getUrl)
+
+router.get('/bla', (req, res) => {
+  const trainData = [
+    {
+      "sexo": "feminino",
+      "nacionalidade": "brasileiro",
+      "ensino": "medio",
+      "credibility": 5
+    },
+    {
+      "sexo": "masculino",
+      "nacionalidade": "iraniano",
+      "ensino": "basico",
+      "credibility": 2
+    },
+    {
+      "sexo": "feminino",
+      "nacionalidade": "americano",
+      "ensino": "superior",
+      "credibility": 8
+    },
+    {
+      "sexo": "masculino",
+      "nacionalidade": "brasileiro",
+      "ensino": "basico",
+      "credibility": 3
+    },
+    {
+      "sexo": "masculino",
+      "nacionalidade": "americano",
+      "ensino": "basico",
+      "credibility": 2
+    },
+    {
+      "sexo": "feminino",
+      "nacionalidade": "iraniano",
+      "ensino": "superior",
+      "credibility": 9
+    },
+    {
+      "sexo": "masculino",
+      "nacionalidade": "brasileiro",
+      "ensino": "medio",
+      "credibility": 6
+    },
+    {
+      "sexo": "feminino",
+      "nacionalidade": "iraniano",
+      "ensino": "basico",
+      "credibility": 3
+    }
+  ]
+
+  const rf = new RandomForestClassifier({
+      n_estimators: 10
+  });
+
+  rf.fit(trainData, null, "credibility", function(err, trees){
+    //console.log(JSON.stringify(trees, null, 4));
+
+    const pred = rf.predict([{
+      "sexo": "feminino",
+      "nacionalidade": "iraniano",
+      "ensino": "superior"
+    }], trees);
+
+    console.log(pred)
+
+    res.status(200).json({
+      success: true,
+      credibility: pred
+    })
+
+    // pred = ["virginica", "setosa"]
+  });
+
+
+})
 
 router.post('/login', (req, res) => {
   User.getAuthenticated(req.body.username, req.body.password, function(err, user, reason) {
